@@ -1,31 +1,51 @@
+const LETTERS_DICT = new Map([
+  ["2", ["a", "b", "c"]],
+  ["3", ["d", "e", "f"]],
+  ["4", ["g", "h", "i"]],
+  ["5", ["j", "k", "l"]],
+  ["6", ["m", "n", "o"]],
+  ["7", ["p", "q", "r", "s"]],
+  ["8", ["t", "u", "v"]],
+  ["9", ["w", "x", "y", "z"]],
+]);
 
-const alpha = Array.from(Array(26)).map((e, i) => i + 97);
-const alphabet = alpha.map((x) => String.fromCharCode(x));
-const letters = new Map()
-let i = 2
-let j = 0
-while (i <= 9) {
-	const numberOfLetters = i === 7 || i === 9 ? 4 : 3
-	const nextIndex = j + numberOfLetters
-	letters.set(i.toString(), alphabet.slice(j, j + numberOfLetters))
-	j = nextIndex
-	i++
+function letterCombinations(digits: string) {
+  if (!digits) return [];
+  const letters = digits.split("").map((d) => LETTERS_DICT.get(d)!);
+  const result = findCombination(letters);
+  return chunk(result, digits.length);
 }
 
+function findCombination(
+  letters: string[][],
+  currentIndex = 0,
+  previousCombination: string = ""
+): string {
 
+  if (currentIndex >= letters.length) {
+    return ''
+  }
 
-function letterCombinations(digits: string): string[] {
-	const buttons = digits.split('').map(d => letters.get(d))
-	if (buttons.length == 1) return buttons[0]
-	const result: Array<string> = []
-	let total = 0
-	for(let i = 0; i < buttons.length; i++) {
-		for (let l = 0; l < buttons[i].length; l++) {
-			result[total] += buttons[i][l]
+  let fullCombination = "";
 
-		}
-	}
-	return result
-};
+  for (const letter of letters[currentIndex]) {
+    const combination = previousCombination + letter;
+    fullCombination += findCombination(letters, currentIndex + 1, combination) || combination;
+    continue
+  }
 
-console.log(alphabet)
+  return fullCombination;
+}
+
+function chunk(fullText: string, chunkSize: number) {
+  const numChunks = Math.ceil(fullText.length / chunkSize);
+  const chunks = new Array<string>(numChunks);
+
+  for (let i = 0, chunk = 0; i < numChunks; i++, chunk += chunkSize) {
+    chunks[i] = fullText.substring(chunk, chunk + chunkSize);
+  }
+
+  return chunks;
+}
+
+console.log(letterCombinations("234"));
