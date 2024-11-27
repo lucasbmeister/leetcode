@@ -22,16 +22,13 @@ function findCombination(
   previousCombination: string = ""
 ): string {
 
-  if (currentIndex >= letters.length) {
-    return ''
-  }
+  if (currentIndex >= letters.length) return ''
 
   let fullCombination = "";
 
   for (const letter of letters[currentIndex]) {
     const combination = previousCombination + letter;
     fullCombination += findCombination(letters, currentIndex + 1, combination) || combination;
-    continue
   }
 
   return fullCombination;
